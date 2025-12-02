@@ -56,3 +56,10 @@ export const getAssignmentsByCourse = async (courseId) => {
 export const getAssignmentsByUser = async (userId) => {
   return Assignment.find({ userId }).sort({ submittedAt: -1 });
 };
+
+export const getStats = async () => {
+  const courses = await Course.countDocuments();
+  const enrollments = await Enrollment.countDocuments();
+  const assignments = await Assignment.countDocuments();
+  return { courses, enrollments, assignments };
+};

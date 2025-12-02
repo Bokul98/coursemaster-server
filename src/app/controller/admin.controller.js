@@ -122,6 +122,15 @@ const AdminController = {
       res.status(400).json({ error: err.message });
     }
   }
+,
+  getStats: async (req, res) => {
+    try {
+      const stats = await AdminService.getStats();
+      res.json(stats);
+    } catch (err) {
+      res.status(400).json({ error: err.message });
+    }
+  }
 };
 
 export default AdminController;

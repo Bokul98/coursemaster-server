@@ -39,9 +39,9 @@ const StudentController = {
   submitAssignment: async (req, res) => {
     try {
       const userId = req.user.id;
-      const { courseId, content } = req.body;
+      const { courseId, content, moduleId = null, lessonId = null } = req.body;
       if (!courseId || !content) return res.status(400).json({ error: 'courseId and content are required' });
-      const doc = await StudentService.submitAssignment(userId, courseId, content);
+      const doc = await StudentService.submitAssignment(userId, courseId, content, moduleId, lessonId);
       res.status(201).json({ message: 'Assignment submitted', doc });
     } catch (err) {
       res.status(400).json({ error: err.message });
@@ -51,9 +51,9 @@ const StudentController = {
   submitQuiz: async (req, res) => {
     try {
       const userId = req.user.id;
-      const { courseId, score, total } = req.body;
+      const { courseId, score, total, moduleId = null, lessonId = null } = req.body;
       if (!courseId || typeof score !== 'number' || typeof total !== 'number') return res.status(400).json({ error: 'courseId, score and total are required' });
-      const doc = await StudentService.submitQuiz(userId, courseId, score, total);
+      const doc = await StudentService.submitQuiz(userId, courseId, score, total, moduleId, lessonId);
       res.status(201).json({ message: 'Quiz submitted', doc });
     } catch (err) {
       res.status(400).json({ error: err.message });

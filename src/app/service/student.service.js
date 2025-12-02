@@ -20,10 +20,10 @@ export const updateProgress = async (userId, courseId, progress, lessonsComplete
   );
 };
 
-export const submitAssignment = async (userId, courseId, content) => {
-  return Assignment.create({ userId, courseId, content });
+export const submitAssignment = async (userId, courseId, content, moduleId = null, lessonId = null) => {
+  return Assignment.create({ userId, courseId, content, moduleId, lessonId });
 };
 
-export const submitQuiz = async (userId, courseId, score, total) => {
-  return Quiz.create({ userId, courseId, score, total });
+export const submitQuiz = async (userId, courseId, score, total, moduleId = null, lessonId = null) => {
+  return Quiz.create({ userId, courseId, score, total, moduleId, lessonId });
 };

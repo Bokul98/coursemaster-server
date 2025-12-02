@@ -16,6 +16,9 @@ router.get('/courses/:id', AdminController.getCourse);
 router.patch('/courses/:id', AdminController.updateCourse);
 router.delete('/courses/:id', AdminController.deleteCourse);
 
+// Stats
+router.get('/stats', AdminController.getStats);
+
 // Batches under a course
 router.post('/courses/:courseId/batches', AdminController.createBatch);
 router.get('/courses/:courseId/batches', AdminController.listBatches);
