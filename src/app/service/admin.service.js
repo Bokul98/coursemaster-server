@@ -1,6 +1,7 @@
 import Course from "../model/course.model.js";
 import Batch from "../model/batch.model.js";
 import Enrollment from "../model/enrollment.model.js";
+import User from "../model/user.model.js";
 import Assignment from "../model/assignment.model.js";
 
 export const createCourse = async (data) => {
@@ -74,15 +75,28 @@ export const deleteBatch = async (id) => {
 
 // Enrollment & assignment views
 export const getEnrollmentsByCourse = async (courseId) => {
-  return Enrollment.find({ courseId }).sort({ createdAt: -1 });
+  const enrolls = await Enrollment.find({ courseId }).sort({ createdAt: -1 });
+  // attach basic user info
+  return Promise.all(enrolls.map(async (e) => {
+    const user = await User.findById(e.userId).select('name email phone').lean().catch(() => null);
+    return { ...e.toObject(), user: user || { _id: e.userId, name: 'Unknown', email: '', phone: '' } };
+  }));
 };
 
 export const getEnrollmentsByBatch = async (batchId) => {
-  return Enrollment.find({ batchId }).sort({ createdAt: -1 });
+  const enrolls = await Enrollment.find({ batchId }).sort({ createdAt: -1 });
+  return Promise.all(enrolls.map(async (e) => {
+    const user = await User.findById(e.userId).select('name email phone').lean().catch(() => null);
+    return { ...e.toObject(), user: user || { _id: e.userId, name: 'Unknown', email: '', phone: '' } };
+  }));
 };
 
 export const getAssignmentsByCourse = async (courseId) => {
-  return Assignment.find({ courseId }).sort({ submittedAt: -1 });
+  const items = await Assignment.find({ courseId }).sort({ submittedAt: -1 });
+  return Promise.all(items.map(async (a) => {
+    const user = await User.findById(a.userId).select('name email phone').lean().catch(() => null);
+    return { ...a.toObject(), user: user || { _id: a.userId, name: 'Unknown', email: '', phone: '' } };
+  }));
 };
 
 export const getAssignmentsByUser = async (userId) => {
