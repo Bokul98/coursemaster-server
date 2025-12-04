@@ -11,6 +11,38 @@ export const listCourses = async () => {
   return Course.find().sort({ createdAt: -1 });
 };
 
+export const listCoursesPaginated = async ({ page = 1, limit = 12, q = '', sort = '', category = '' } = {}) => {
+  const filter = {};
+
+  if (q && q.trim()) {
+    const re = new RegExp(q.trim(), 'i');
+    filter.$or = [
+      { title: re },
+      { instructor: re }
+    ];
+  }
+
+  if (category && category.trim()) {
+    // Course model stores optional category in metadata.category
+    filter.$or = filter.$or || [];
+    filter.$or.push({ 'metadata.category': category });
+    filter.$or.push({ category });
+  }
+
+  const skip = (Math.max(1, Number(page)) - 1) * Number(limit);
+
+  let sortObj = { createdAt: -1 };
+  if (sort === 'price_asc') sortObj = { price: 1 };
+  if (sort === 'price_desc') sortObj = { price: -1 };
+
+  const [items, total] = await Promise.all([
+    Course.find(filter).sort(sortObj).skip(skip).limit(Number(limit)),
+    Course.countDocuments(filter)
+  ]);
+
+  return { items, total, page: Number(page), limit: Number(limit) };
+};
+
 export const getCourse = async (id) => {
   return Course.findById(id);
 };
