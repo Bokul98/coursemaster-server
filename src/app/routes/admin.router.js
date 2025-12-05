@@ -9,6 +9,9 @@ const router = Router();
 router.use(auth);
 router.use(allowRoles('admin'));
 
+// Image upload (base64) -> imgbb (server uses IMGBB_API_KEY in env)
+router.post('/upload-image', AdminController.uploadImage);
+
 // Courses CRUD
 router.post('/courses', AdminController.createCourse);
 router.get('/courses', AdminController.listCourses);

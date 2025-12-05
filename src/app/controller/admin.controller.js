@@ -131,6 +131,18 @@ const AdminController = {
       res.status(400).json({ error: err.message });
     }
   }
+,
+  uploadImage: async (req, res) => {
+    try {
+      const { image } = req.body;
+      if (!image) return res.status(400).json({ error: 'image (base64) is required' });
+      const url = await AdminService.uploadImageToImgBB(image);
+      if (!url) return res.status(500).json({ error: 'Upload failed' });
+      res.json({ url });
+    } catch (err) {
+      res.status(400).json({ error: err.message });
+    }
+  }
 };
 
 export default AdminController;

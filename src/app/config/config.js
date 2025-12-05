@@ -9,4 +9,5 @@ export default {
   refresh_token_secret: process.env.REFRESH_TOKEN_SECRET,
   access_token_expires_in: "15m",
   refresh_token_expires_in: "7d",
+  imgbb_api_key: process.env.IMGBB_API_KEY || ''
 };

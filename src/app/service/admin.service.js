@@ -48,6 +48,27 @@ export const getCourse = async (id) => {
   return Course.findById(id);
 };
 
+export const uploadImageToImgBB = async (base64Image) => {
+  // base64Image may include data:* prefix; strip it
+  const cleaned = typeof base64Image === 'string' ? base64Image.replace(/^data:image\/[a-z]+;base64,/, '') : base64Image;
+  // construct form data for imgbb
+  const config = await import('../config/config.js');
+  const key = config.default.imgbb_api_key;
+  if (!key) throw new Error('IMGBB API key not configured on server');
+
+  const params = new URLSearchParams();
+  params.append('key', key);
+  params.append('image', cleaned);
+
+  const res = await fetch('https://api.imgbb.com/1/upload', { method: 'POST', body: params });
+  if (!res.ok) {
+    const txt = await res.text().catch(() => '');
+    throw new Error(`ImgBB upload failed: ${res.status} ${txt}`);
+  }
+  const data = await res.json();
+  return data?.data?.url || data?.data?.display_url || null;
+};
+
 export const updateCourse = async (id, data) => {
   return Course.findByIdAndUpdate(id, data, { new: true });
 };
