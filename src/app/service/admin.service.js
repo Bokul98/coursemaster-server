@@ -79,11 +79,30 @@ export const deleteCourse = async (id) => {
 
 // Batches
 export const createBatch = async (courseId, data) => {
-  return Batch.create({ courseId, ...data });
+  // validate and coerce inputs to avoid create failures when client omits or sends empty strings
+  const name = (data && data.name) ? String(data.name).trim() : '';
+  if (!name) throw new Error('Batch name is required');
+
+  // coerce startDate; if missing, default to now
+  let startDate = data && data.startDate ? new Date(data.startDate) : new Date();
+  if (isNaN(startDate.getTime())) throw new Error('Invalid startDate');
+
+  let endDate = data && data.endDate ? new Date(data.endDate) : undefined;
+  if (endDate && isNaN(endDate.getTime())) endDate = undefined;
+
+  const payload = { courseId, name, startDate };
+  if (endDate) payload.endDate = endDate;
+  if (data && data.metadata) payload.metadata = data.metadata;
+
+  return Batch.create(payload);
 };
 
 export const listBatches = async (courseId) => {
   return Batch.find({ courseId }).sort({ startDate: 1 });
+};
+
+export const listAllBatches = async () => {
+  return Batch.find().sort({ startDate: 1 });
 };
 
 export const updateBatch = async (id, data) => {
@@ -122,6 +141,22 @@ export const getAssignmentsByCourse = async (courseId) => {
 
 export const getAssignmentsByUser = async (userId) => {
   return Assignment.find({ userId }).sort({ submittedAt: -1 });
+};
+
+export const getAllEnrollments = async () => {
+  const enrolls = await Enrollment.find().sort({ createdAt: -1 });
+  return Promise.all(enrolls.map(async (e) => {
+    const user = await User.findById(e.userId).select('name email phone').lean().catch(() => null);
+    return { ...e.toObject(), user: user || { _id: e.userId, name: 'Unknown', email: '', phone: '' } };
+  }));
+};
+
+export const getAllAssignments = async () => {
+  const items = await Assignment.find().sort({ submittedAt: -1 });
+  return Promise.all(items.map(async (a) => {
+    const user = await User.findById(a.userId).select('name email phone').lean().catch(() => null);
+    return { ...a.toObject(), user: user || { _id: a.userId, name: 'Unknown', email: '', phone: '' } };
+  }));
 };
 
 export const getStats = async () => {

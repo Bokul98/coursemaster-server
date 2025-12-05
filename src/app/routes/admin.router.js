@@ -31,9 +31,16 @@ router.delete('/batches/:id', AdminController.deleteBatch);
 // Enrollment views
 router.get('/courses/:courseId/enrollments', AdminController.getEnrollmentsByCourse);
 router.get('/batches/:batchId/enrollments', AdminController.getEnrollmentsByBatch);
+// Global enrollment listing
+router.get('/enrollments', AdminController.listAllEnrollments);
 
 // Assignments review
 router.get('/courses/:courseId/assignments', AdminController.getAssignmentsByCourse);
 router.get('/users/:userId/assignments', AdminController.getAssignmentsByUser);
+// Global assignments listing
+router.get('/assignments', AdminController.listAllAssignments);
+
+// Global batches listing
+router.get('/batches', AdminController.listAllBatches);
 
 export default router;

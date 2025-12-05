@@ -122,7 +122,34 @@ const AdminController = {
       res.status(400).json({ error: err.message });
     }
   }
-,
+  ,
+  // Global listings
+  listAllEnrollments: async (req, res) => {
+    try {
+      const docs = await AdminService.getAllEnrollments();
+      res.json(docs);
+    } catch (err) {
+      res.status(400).json({ error: err.message });
+    }
+  },
+
+  listAllAssignments: async (req, res) => {
+    try {
+      const docs = await AdminService.getAllAssignments();
+      res.json(docs);
+    } catch (err) {
+      res.status(400).json({ error: err.message });
+    }
+  },
+
+  listAllBatches: async (req, res) => {
+    try {
+      const docs = await AdminService.listAllBatches();
+      res.json(docs);
+    } catch (err) {
+      res.status(400).json({ error: err.message });
+    }
+  },
   getStats: async (req, res) => {
     try {
       const stats = await AdminService.getStats();
@@ -131,7 +158,7 @@ const AdminController = {
       res.status(400).json({ error: err.message });
     }
   }
-,
+  ,
   uploadImage: async (req, res) => {
     try {
       const { image } = req.body;
